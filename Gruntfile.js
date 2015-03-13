@@ -70,7 +70,14 @@ module.exports = function (grunt) {
                     'dist/<%= pkg.name %>.js': ['src/**/*.js']
                 }
             }
-        }
+        },
+        cssmin: {
+            minify: {
+                files: {
+                    'dist/<%= pkg.name %>.min.css': ['dist/**/*.css']
+                }
+            }
+        },
     });
 
     grunt.loadNpmTasks('grunt-release');
@@ -80,8 +87,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
-    grunt.registerTask('default', ['copy', 'uglify', 'less', 'wiredep']);
+    grunt.registerTask('default', ['copy', 'uglify', 'less', 'cssmin', 'wiredep']);
     grunt.registerTask('serve', ['default', 'connect', 'watch']);
     grunt.registerTask('major', ['release:major']);
     grunt.registerTask('minor', ['release:minor']);
