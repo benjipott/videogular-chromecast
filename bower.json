@@ -5,7 +5,7 @@
     "Benjipott <pott.benjamin@gmail.com>"
   ],
   "description": "Videogular chromecast plugin",
-  "main": "./vg-chromecast.js",
+  "main": "./dist/videogular-chromecast.min.js",
   "keywords": [
     "videogular",
     "videogular-plugin",

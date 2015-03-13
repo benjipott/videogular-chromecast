@@ -36,7 +36,7 @@ module.exports = function (grunt) {
         },
         watch: {
             configFiles: {
-                files: ['Gruntfile.js', '*.js'],
+                files: ['Gruntfile.js', 'src/**/*{.js,.less}'],
                 options: {
                     reload: true
                 }
@@ -45,9 +45,30 @@ module.exports = function (grunt) {
         // Automatically inject Bower components into the app
         wiredep: {
             target: {
-                src: './exemple/chromecast.html',
+                src: './exemple/index.html',
                 ignorePath: '',
                 exclude: []
+            }
+        },
+        uglify: {
+            dist: {
+                files: {
+                    'dist/<%= pkg.name %>.min.js': ['dist/**/*.js']
+                }
+            }
+        },
+        less: {
+            dist: {
+                files: {
+                    'dist/<%= pkg.name %>.css': ['src/**/*.less']
+                }
+            }
+        },
+        copy: {
+            dist: {
+                files: {
+                    'dist/<%= pkg.name %>.js': ['src/**/*.js']
+                }
             }
         }
     });
@@ -56,8 +77,12 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-wiredep');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-copy');
 
-    grunt.registerTask('default', ['wiredep', 'connect', 'watch']);
+    grunt.registerTask('default', ['copy', 'uglify', 'less', 'wiredep']);
+    grunt.registerTask('serve', ['default', 'connect', 'watch']);
     grunt.registerTask('major', ['release:major']);
     grunt.registerTask('minor', ['release:minor']);
     grunt.registerTask('patch', ['release:patch']);

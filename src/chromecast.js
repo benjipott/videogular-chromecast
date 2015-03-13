@@ -65,6 +65,17 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         description: attr.description
                     };
 
+                    if (API.isConfig) {
+                        scope.$watch('API.config',
+                            function () {
+                                if (scope.API.config) {
+                                    scope.metadata.poster = scope.API.config.plugins.poster.url;
+                                }
+                            }
+                        );
+                    }
+
+
                     scope.addClass = function (value) {
                         //TODO ajouter la classe a l'element
                     };
@@ -125,11 +136,11 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                                 value = _ref[key];
                                 mediaInfo.metadata[key] = value;
                             }
-                            //TODO set poster url via Api plugin
-                            //if (API.config.plugins.poster.url) {
-                            //    image = new chrome.cast.Image(API.config.plugins.poster.url);
-                            //    mediaInfo.metadata.images = [image];
-                            //}
+
+                            if (scope.metadata.poster) {
+                                image = new chrome.cast.Image(scope.metadata.poster);
+                                mediaInfo.metadata.images = [image];
+                            }
                         }
                         loadRequest = new chrome.cast.media.LoadRequest(mediaInfo);
                         loadRequest.autoplay = true;
