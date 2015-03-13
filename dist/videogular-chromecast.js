@@ -310,8 +310,12 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                     /**
                      * Return video type mime
                      */
-                    scope.currentType = function () {
-                        return 'video/mp4';
+                    scope.currentType_ = null;
+                    scope.currentType = function (type) {
+                        if (type !== undefined) {
+                            scope.currentType_ = type
+                        }
+                        return scope.currentType_;
                     };
 
                     scope.$watch(
@@ -320,6 +324,7 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         },
                         function (newVal) {
                             scope.currentSrc(newVal[0].src);
+                            scope.currentType(newVal[0].type);
                         }
                     );
                     /**
