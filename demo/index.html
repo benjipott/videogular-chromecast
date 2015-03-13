@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <title>Videogular ChromeCast Démo</title>
     <!-- bower:css -->
-    <link rel="stylesheet" href="../bower_components/videogular-themes-default/videogular.css" />
+    <link rel="stylesheet" href="../bower_components/videogular-themes-default/videogular.css"/>
     <!-- endbower -->
-    <link rel="stylesheet" href="../dist/videogular-chromecast.css"/>
+    <link rel="stylesheet" href="../dist/videogular-chromecast.min.css"/>
 </head>
 <body>
 <script type="text/javascript" src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js"></script>
@@ -19,7 +19,7 @@
 <script src="../bower_components/videogular-buffering/vg-buffering.js"></script>
 <script src="../bower_components/videogular-controls/vg-controls.js"></script>
 <!-- endbower -->
-<script src="../dist/videogular-chromecast.js"></script>
+<script src="../dist/videogular-chromecast.min.js"></script>
 <div ng-app="myApp">
     <div ng-controller="HomeCtrl as controller" class="videogular-container">
         <videogular vg-theme="controller.config.theme.url">
