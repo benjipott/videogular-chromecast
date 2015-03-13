@@ -11,6 +11,11 @@
     "videogular-plugin",
     "videogular-chromecast"
   ],
+  "ignore": [
+    ".jshintrc",
+    ".gitignore",
+    "**/*.txt"
+  ],
   "dependencies": {
     "angular": "~1.3.x",
     "angular-sanitize": "~1.3.x",
