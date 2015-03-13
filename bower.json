@@ -1,0 +1,26 @@
+{
+  "name": "bower-videogular-chromecast",
+  "version": "1.0.0",
+  "authors": [
+    "Benjipott <pott.benjamin@gmail.com>"
+  ],
+  "description": "Videogular chromecast plugin",
+  "main": "./vg-chromecast.js",
+  "keywords": [
+    "videogular",
+    "videogular-plugin",
+    "videogular-chromecast"
+  ],
+  "dependencies": {
+    "angular": "~1.3.x",
+    "angular-sanitize": "~1.3.x",
+    "videogular": "latest",
+    "videogular-overlay-play": "latest",
+    "videogular-themes-default": "~1.1.0",
+    "videogular-poster": "~1.1.0",
+    "videogular-buffering": "~1.1.0",
+    "videogular-controls": "~1.1.0"
+  },
+  "license": "MIT",
+  "homepage": ""
+}
