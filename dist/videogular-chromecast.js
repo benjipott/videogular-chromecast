@@ -45,16 +45,27 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                     }
                     //Add API Methods
                     API.toggleCasting = function () {
-                        if (scope.isCasting) {
+                        if (API.casting) {
                             return scope.stopCasting();
                         } else {
                             return scope.doLaunch();
                         }
                     };
 
-                    API.isCasting = false;
+                    API.casting = false;
                     API.castInitialized = false;
                     API.canCast = false;
+
+                    API.playPause = function () {
+                        //if (API.mediaElement[0].paused) {
+                        if ((API.casting && scope.paused) || (!API.casting && API.mediaElement[0].paused)) {
+                            scope.play();
+                        }
+                        else {
+                            scope.pause();
+                        }
+                    };
+
 
                     /**
                      * Cast popup infos
@@ -77,6 +88,9 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
 
 
                     scope.addClass = function (value) {
+                        //TODO ajouter la classe a l'element
+                    };
+                    scope.removeClass = function (value) {
                         //TODO ajouter la classe a l'element
                     };
 
@@ -144,7 +158,7 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         }
                         loadRequest = new chrome.cast.media.LoadRequest(mediaInfo);
                         loadRequest.autoplay = true;
-                        loadRequest.currentTime = API.currentTime;
+                        loadRequest.currentTime = API.currentTime / 1000;
                         scope.apiSession.loadMedia(loadRequest, scope.onMediaDiscovered.bind(scope), scope.castError);
                         return scope.apiSession.addUpdateListener(scope.onSessionUpdate.bind(scope));
                     };
@@ -156,7 +170,8 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         //scope.player_.loadTech('ChromecastTech', {
                         //    receiver: scope.apiSession.receiver.friendlyName
                         //});
-                        scope.casting = true;
+                        API.pause();
+                        API.casting = true;
                         scope.paused = API.currentState === 'pause';
                         return true;
                     };
@@ -170,6 +185,22 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         }
                     };
 
+                    scope.onChangeState = function (newState) {
+                        if (!API.casting) {
+                            return;
+                        }
+                        switch (newState) {
+                            case VG_STATES.PLAY:
+                                break;
+
+                            case VG_STATES.PAUSE:
+                                break;
+
+                            case VG_STATES.STOP:
+                                break;
+                        }
+                    };
+
                     scope.onMediaStatusUpdate = function (isAlive) {
                         if (!scope.apiMedia) {
                             return;
@@ -178,19 +209,21 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         switch (scope.apiMedia.playerState) {
                             case chrome.cast.media.PlayerState.IDLE:
                                 scope.currentMediaTime = 0;
-                                scope.trigger('timeupdate');
+                                API.seekTime(scope.currentMediaTime / 1000);
                                 return scope.onStopAppSuccess();
                             case chrome.cast.media.PlayerState.PAUSED:
                                 if (scope.paused) {
                                     return;
                                 }
+                                API.setState(VG_STATES.PAUSE);
                                 API.pause();
                                 return scope.paused = true;
                             case chrome.cast.media.PlayerState.PLAYING:
                                 if (!scope.paused) {
                                     return;
                                 }
-                                API.play();
+                                API.setState(VG_STATES.PLAY);
+                                //API.play();
                                 return scope.paused = false;
                         }
                     };
@@ -205,6 +238,7 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
 
                     scope.play = function () {
                         if (!scope.apiMedia) {
+                            API.play();
                             return;
                         }
                         if (scope.paused) {
@@ -215,6 +249,7 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
 
                     scope.pause = function () {
                         if (!scope.apiMedia) {
+                            API.pause();
                             return;
                         }
                         if (!scope.paused) {
@@ -259,7 +294,7 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         }
                         if (scope.currentMediaTime < scope.apiMedia.media.duration) {
                             scope.currentMediaTime += 1;
-                            return scope.trigger('timeupdate');
+                            API.seekTime(scope.currentMediaTime / 1000);
                         } else {
                             scope.currentMediaTime = 0;
                             return clearInterval(scope.timer);
@@ -280,7 +315,7 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
 
                     scope.onStopAppSuccess = function () {
                         clearInterval(scope.timer);
-                        scope.casting = false;
+                        API.casting = false;
                         scope.removeClass('connected');
                         API.changeSource(API.sources);
                         if (!scope.paused) {
@@ -289,6 +324,7 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                             //});
                             return API.play();
                         }
+                        API.seekTime(scope.currentMediaTime / 1000);
                         //scope.player_.currentTime(scope.currentMediaTime);
                         //scope.player_.tech.setControls(false);
                         //scope.player_.options_.inactivityTimeout = scope.inactivityTimeout;
@@ -317,6 +353,17 @@ angular.module('com.benjipott.videogular.plugins.chromecast', [])
                         }
                         return scope.currentType_;
                     };
+
+                    scope.$watch(
+                        function () {
+                            return API.currentState;
+                        },
+                        function (newVal, oldVal) {
+                            if (newVal != oldVal) {
+                                scope.onChangeState(newVal);
+                            }
+                        }
+                    );
 
                     scope.$watch(
                         function () {
